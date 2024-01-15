@@ -18,6 +18,8 @@ class Grid():
         The state of the grid, a list of list such that state[i][j] is the number in the cell (i, j), i.e., in the i-th line and j-th column. 
         Note: lines are numbered 0..m and columns are numbered 0..n.
     """
+
+
     
     def __init__(self, m, n, initial_state = []):
         """
@@ -57,8 +59,16 @@ class Grid():
         """
         Checks is the current state of the grid is sorte and returns the answer as a boolean.
         """
-        # TODO: implement this function (and remove the line "raise NotImplementedError").
-        raise NotImplementedError
+        m = self.m
+        n = self.n
+        l = self.initial_state
+        for i in range(m-1) :
+            for j in range(n-1) : 
+                if l[i,j] > l[i+1,j+1] : 
+                    return False 
+        return True
+
+
 
     def swap(self, cell1, cell2):
         """
@@ -69,8 +79,19 @@ class Grid():
         cell1, cell2: tuple[int]
             The two cells to swap. They must be in the format (i, j) where i is the line and j the column number of the cell. 
         """
-        # TODO: implement this function (and remove the line "raise NotImplementedError").
-        raise NotImplementedError
+        m = self.m
+        n = self.n
+        l = self.state
+        (i1,j1) = cell1
+        (i2,j2) = cell2
+        if i1>m or i2> m or j1>n or j2>n :
+            raise NameError("Not allowed") 
+        else : 
+            tmp = l[i1][j1]
+            l[i1][j1] = l[i2][j2]
+            l[i2][j2] = tmp 
+
+        
 
     def swap_seq(self, cell_pair_list):
         """
@@ -82,8 +103,9 @@ class Grid():
             List of swaps, each swap being a tuple of two cells (each cell being a tuple of integers). 
             So the format should be [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...].
         """
-        # TODO: implement this function (and remove the line "raise NotImplementedError").
-        raise NotImplementedError
+        for i in range(len(cell_pair_list)) : 
+            (a,b) = cell_pair_list[i]
+            self.swap(a,b)
 
     @classmethod
     def grid_from_file(cls, file_name): 
