@@ -1,5 +1,6 @@
 from grid import Grid
 from random import *
+from numpy import *
 
 class Solver(): 
     """
@@ -42,14 +43,16 @@ class Solver():
         n = self.g.n
         m = self.g.m
         l = self.g.state
-        print(l)
-        print(l.index(2))
         sol_naive = []
 
-        for i in range(n*m):
+        for i in range(1,n*m+1):
             (i_dest, j_dest) = (0, 0)
-            position = l.index(i)
-            sol_naive += go_from_to(position, (i_dest, j_dest))
+            l2=array(l)
+            position = where(l2==i)
+            position = list(map(list,position))
+            position = (position[0][0],position[1][0])
+            print(position)
+            sol_naive += self.go_from_to(position, (i_dest, j_dest))
             j_dest += 1
             if j_dest % m == 0:
                 j_dest = 0
@@ -60,13 +63,13 @@ class Solver():
 
 grid = Grid.grid_from_file("input/grid1.in")
 s =Solver(grid) 
-print(s.get_solution())
+print(grid.swap_seq(s.get_solution()))
 
 
 grid = Grid.grid_from_file("input/grid2.in")
 print(grid)
 s =Solver(grid) 
-print(s.get_solution())
+print(grid)
 
 
 
