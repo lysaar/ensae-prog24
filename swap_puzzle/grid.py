@@ -61,10 +61,10 @@ class Grid():
         """
         m = self.m
         n = self.n
-        l = self.initial_state
-        for i in range(m-1) :
+        l = self.state
+        for i in range(m) :
             for j in range(n-1) : 
-                if l[i,j] > l[i+1,j+1] : 
+                if l[i][j] > l[i][j+1] : 
                     return False 
         return True
 
