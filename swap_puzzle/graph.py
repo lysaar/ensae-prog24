@@ -147,7 +147,8 @@ class Graph:
         return graph
     
     @classmethod 
-    def graph_from_file_path(cls, file_name,src,dest):
+    def graph_from_file_path(cls, file_name,src,dest):    
+        """ Lis les fichiers .path.out et cherche le chemin le plus court entre src et dest s'il existe """
         final= []
         with open(file_name,"r") as file : 
             lignes = file.readlines()

@@ -10,7 +10,8 @@ class Solver():
     def __init__(self,grid=Grid(randint(1,10),randint(1,10))):
         self.g = grid 
         
-    def go_from_to(self,dep, dest):
+    def go_from_to(self,dep, dest):    
+        """ Cherche le manière naive d'ailler de dep à dest """
         res = []
         a, b = dep
         i, j = dest
@@ -64,6 +65,13 @@ class Solver():
     def graph(l) : 
         plt.matshow(array(l))
         plt.show()
+
+    
+    """ 
+    La complexité est en O(n*m)
+    La longueur du chemin ainsi obtenue est n'est pas optimale, il existe des solutions beaucoup plus courtes.
+    Il est possible de résoudre la grille peu importe son état de départ.
+    """
 
     
         

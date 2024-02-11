@@ -146,7 +146,7 @@ class Grid():
         n = len(res[0])
         return Grid(m,n,res)
     
-    def all(self) : 
+    def all(self) : # Construit le graphe de tous les états possibles
         final = []
         liste = []
         m = self.m
