@@ -1,4 +1,5 @@
 from grid import Grid
+import matplotlib.pyplot as plt
 from random import *
 from numpy import *
 
@@ -59,19 +60,13 @@ class Solver():
                 i_dest += 1
         return sol_naive
 
+    @staticmethod
+    def graph(l) : 
+        plt.matshow(array(l))
+        plt.show()
 
-
-grid = Grid.grid_from_file("input/grid1.in")
-s =Solver(grid) 
-print(grid)
-print(s.get_solution())
-print(grid)
-
-grid = Grid.grid_from_file("input/grid2.in")
-print(grid)
-s =Solver(grid) 
-print(s.get_solution())
-print(grid)
+    
+        
 
 
 

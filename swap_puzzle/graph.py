@@ -114,7 +114,6 @@ class Graph:
 
 
 
-
     @classmethod
     def graph_from_file(cls, file_name):
         """
@@ -146,5 +145,36 @@ class Graph:
                 else:
                     raise Exception("Format incorrect")
         return graph
+    
+    @classmethod 
+    def graph_from_file_path(cls, file_name,src,dest):
+        final= []
+        with open(file_name,"r") as file : 
+            lignes = file.readlines()
+            for ligne in lignes : 
+                tab = ligne.split(" ",3)
+                tab2=[]
+                if tab[2] == "None\n" : 
+                    for i in range(2) : 
+                        tab2.append(int(tab[i]))
+                    tab2.append(None)
+                    final.append(tab2)
+                else :
+                    for i in range(3) : 
+                        tab2.append(int(tab[i]))
+                    tab3 = []
+                    tab4 = (tab[3]).split()
+                    for i in tab4 : 
+                        if i[0] == "[" : 
+                            tab3.append(int(i[1:len(i)-1]))
+                        else : 
+                            tab3.append(int(i[:-1]))
+                    tab2.append(tab3)
+                    final.append(tab2)
+        for t in final : 
+            if t[0] == src and t[1] == dest : 
+                return t[-1]
+        return None
+
 
 

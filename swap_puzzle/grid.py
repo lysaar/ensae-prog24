@@ -1,8 +1,9 @@
 """
 This is the grid module. It contains the Grid class and its associated methods.
 """
-
-import random
+from graph import *
+from itertools import *
+from numpy import * 
 
 class Grid():
     """
@@ -134,5 +135,62 @@ class Grid():
                 initial_state[i_line] = line_state
             grid = Grid(m, n, initial_state)
         return grid
+    
+    def to_hashable(self) :    # retourne une représenttaion hashable de la grille
+        return (tuple(tuple(l)) for l in self.state)
+    
+    @staticmethod 
+    def from_hashable(state) : 
+        res = [list(r) for r in state] 
+        m = len(res)
+        n = len(res[0])
+        return Grid(m,n,res)
+    
+    def all(self) : 
+        final = []
+        liste = []
+        m = self.m
+        n=self.n
+        for i in range(1,m*n+1) :
+            liste.append(i)
+        
+        for p in permutations(liste) : 
+            l2 = []
+            for i in range(m) : 
+                a = p[i*n : (i+1)*n]
+                l2.append(list(a))
+            g = Grid(m,n,l2)
+            final.append(g)
+
+        l_final = []  # Création du graphe ave toutes les grilles possibles
+        for g in final : 
+            l_final.append(g.to_hashable())
+        graph = Graph(l_final)
+
+        for i in range(len(final)): #pour toutes les grilles possibles
+            for ligne in range(m): #pour toutes les lignes
+                for colonne in range(n): #pour toutes les colonnes
+                    for l_plus, c_plus in [(0,1),(1,0),(-1,0),(0,-1)]: #pour toutes les opérations élementaires possibles
+                        if 0 <= ligne+l_plus < m and 0 <= colonne + c_plus < n: #si la case est dans la grille
+                            is_hashable = (final[i]).to_hashable()
+                            final[i].swap((ligne,colonne),(ligne+l_plus,colonne+c_plus))
+                            graph.add_edge(is_hashable, final[i].to_hashable())
+        
+        return graph
+
+ 
+
+
+    
+
+
+    
+
+    
+
+        
+
+
+
 
 
