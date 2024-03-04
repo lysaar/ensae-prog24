@@ -91,6 +91,7 @@ class Grid():
             tmp = l[i1][j1]
             l[i1][j1] = l[i2][j2]
             l[i2][j2] = tmp 
+        return Grid(self.m, self.n, l)
 
         
 
@@ -137,16 +138,15 @@ class Grid():
         return grid
     
     def to_hashable(self) :    # retourne une représenttaion hashable de la grille
-        return (tuple(tuple(l)) for l in self.state)
+        return tuple(tuple(l) for l in self.state)
     
-    @staticmethod 
-    def from_hashable(state) : 
+    def from_hashable(self,state) : 
         res = [list(r) for r in state] 
-        m = len(res)
-        n = len(res[0])
-        return Grid(m,n,res)
+        return Grid(self.m,self.n,res)
     
-    def all(self) : # Construit le graphe de tous les états possibles
+
+    def grille(self) :   # Rend toutes les grilles hashées des permutations possibles à partir de self
+
         final = []
         liste = []
         m = self.m
@@ -160,25 +160,52 @@ class Grid():
                 a = p[i*n : (i+1)*n]
                 l2.append(list(a))
             g = Grid(m,n,l2)
-            final.append(g)
+            final.append(g.to_hashable())
+        return final
+        
 
-        l_final = []  # Création du graphe ave toutes les grilles possibles
-        for g in final : 
-            l_final.append(g.to_hashable())
-        graph = Graph(l_final)
 
-        for i in range(len(final)): #pour toutes les grilles possibles
+    def all(self) : # Construit le graphe de tous les états possibles
+        
+        graph1 = Graph(self.grille())
+        m = self.m
+        n=self.n
+
+        for e in graph1.nodes: #pour toutes les grilles possibles
             for ligne in range(m): #pour toutes les lignes
                 for colonne in range(n): #pour toutes les colonnes
-                    for l_plus, c_plus in [(0,1),(1,0),(-1,0),(0,-1)]: #pour toutes les opérations élementaires possibles
-                        if 0 <= ligne+l_plus < m and 0 <= colonne + c_plus < n: #si la case est dans la grille
-                            is_hashable = (final[i]).to_hashable()
-                            final[i].swap((ligne,colonne),(ligne+l_plus,colonne+c_plus))
-                            graph.add_edge(is_hashable, final[i].to_hashable())
-        
-        return graph
+                    if ligne < m-1:
+                        s1 = (self.from_hashable(e)).swap((ligne,colonne), (ligne+1,colonne))
+                        b1 = s1.to_hashable()
+                        if b1 not in graph1.graph[e]:
+                            graph1.add_edge(e,b1)
+                    if ligne > 0:
+                        s2 = (self.from_hashable(e)).swap((ligne,colonne), (ligne-1,colonne))
+                        b2 = s2.to_hashable()
+                        if b2 not in graph1.graph[e]:
+                            graph1.add_edge(e,b2)
+                    if colonne < n-1:
+                        s3 = (self.from_hashable(e)).swap((ligne,colonne), (ligne,colonne+1))
+                        b3 = s3.to_hashable()
+                        if b3 not in graph1.graph[e]:
+                            graph1.add_edge(e,b3)
+                    if colonne > 0:
+                        s4 = (self.from_hashable(e)).swap((ligne,colonne), (ligne,colonne-1))
+                        b4 = s4.to_hashable()
+                        if b4 not in graph1.graph[e]:
+                            graph1.add_edge(e,b4)
+        return graph1
 
- 
+    def bfs2(self) : 
+        m = self.m
+        n = self.n
+        graph = self.all()
+        l = []
+        for i in range(m) : 
+            l.append(range(i*n+1, (i+1)*n+1))
+        print(l)
+        grid = Grid(m,n,l)
+        return graph.bfs(self.to_hashable(),grid.to_hashable())
 
 
     
