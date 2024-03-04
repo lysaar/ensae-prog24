@@ -4,6 +4,7 @@ This is the grid module. It contains the Grid class and its associated methods.
 from graph import *
 from itertools import *
 from numpy import * 
+from heapq import *
 
 class Grid():
     """
@@ -206,7 +207,111 @@ class Grid():
         print(l)
         grid = Grid(m,n,l)
         return graph.bfs(self.to_hashable(),grid.to_hashable())
+    
 
+    def bfs3 (self, dst):
+        dico = Graph([self.to_hashable()])
+        n = self.n 
+        m = self.m
+        file = [(self.to_hashable(), [self.to_hashable()])]
+
+        while file: 
+            print(len(file))
+            s, path = file.pop(0)
+            if s == dst.to_hashable():
+                return path 
+
+            for i in range(m):
+                for j in range(n):
+                    if i < m-1:
+                        c = (self.from_hashable(s)).swap((i,j), (i+1,j))
+                        nc = c.to_hashable()
+                        if nc not in dico.graph[s]:
+                            dico.add_edge(s, nc)
+
+                    if i > 0:
+                        d = (self.from_hashable(s)).swap((i,j), (i-1,j))
+                        nd = d.to_hashable()
+                        if nd not in dico.graph[s]:
+                            dico.add_edge(s, nd)
+
+                    if j < n-1:
+                        f = (self.from_hashable(s)).swap((i,j), (i,j+1))
+                        nf = f.to_hashable()
+                        if nf not in dico.graph[s]:
+                            dico.add_edge(s, nf)
+
+                    if j > 0:
+                        h = (self.from_hashable(s)).swap((i,j), (i,j-1))
+                        nh = h.to_hashable()
+                        if nh not in dico.graph[s]:
+                            dico.add_edge(s, nh)
+
+                for z in dico.graph[s]:
+                    if z not in path:
+                        file.append([z, path+[z]])
+        
+        return None
+
+
+    def heuristique(self) : 
+        som = 0 
+        l1 = self.initial_state 
+        m = self.m
+        n = self.n
+
+        for i in range(m) : 
+            for j in range(n) : 
+                if not(l1[i][j] == i+j*n+1) : 
+                    som+=1
+        return som 
+
+    def bfs4(self,dst) : 
+        dico = Graph([self.to_hashable()])
+        n = self.n 
+        m = self.m
+        file = heapify([(self.to_hashable(), [self.to_hashable()])])
+
+        while file: 
+            print(len(file))
+            s, path = heappop(file,0)
+            if s == dst.to_hashable():
+                return path 
+
+            for i in range(m):
+                liste_heur = []
+                for j in range(n):
+                    if i < m-1:
+                        c = (self.from_hashable(s)).swap((i,j), (i+1,j))
+                        nc = c.to_hashable()
+                        if nc not in dico.graph[s]:
+                            dico.add_edge(s, nc)
+
+                    if i > 0:
+                        d = (self.from_hashable(s)).swap((i,j), (i-1,j))
+                        nd = d.to_hashable()
+                        if nd not in dico.graph[s]:
+                            dico.add_edge(s, nd)
+
+                    if j < n-1:
+                        f = (self.from_hashable(s)).swap((i,j), (i,j+1))
+                        nf = f.to_hashable()
+                        if nf not in dico.graph[s]:
+                            dico.add_edge(s, nf)
+
+                    if j > 0:
+                        h = (self.from_hashable(s)).swap((i,j), (i,j-1))
+                        nh = h.to_hashable()
+                        if nh not in dico.graph[s]:
+                            dico.add_edge(s, nh)
+
+                    for i in dico.graph[s]:
+                        if i not in path:
+                            heappush(file,[i, path+[i]])
+        
+        return None
+        
+        
 
     
 
