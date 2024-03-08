@@ -10,10 +10,9 @@ class Test_Solver(unittest.TestCase):
     def test_grid1(self):
         grid = Grid.grid_from_file("input/grid1.in")
         s = Solver(grid)
-        #Solver.graph(grid.state)
+        Solver.graph(grid.state)
         b = s.get_solution()
-        print(b)
-        #Solver.graph(grid.state)
+        Solver.graph(grid.state)
         self.assertEqual(grid.state, [[1, 2], [3, 4], [5, 6], [7, 8]])
         
 
@@ -37,8 +36,7 @@ class Test_Solver(unittest.TestCase):
         grid = Grid.grid_from_file("input/grid4.in")
         s = Solver(grid)
         Solver.graph(grid.state)
-        b = s.get_solution()
-        print(b)        
+        s.get_solution()       
         Solver.graph(grid.state)
         self.assertEqual(grid.state, [[1, 2, 3, 4],[5, 6, 7, 8],[9, 10, 11, 12], [13, 14, 15, 16]])
 
