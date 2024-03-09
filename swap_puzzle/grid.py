@@ -138,6 +138,31 @@ class Grid():
             grid = Grid(m, n, initial_state)
         return grid
     
+    def final(self) : 
+        m = self.m 
+        n = self.n 
+        l = []
+        ind = 1
+        for i in range(m) : 
+            l2 = []
+            for j in range(n) : 
+                l2.append(ind)
+                ind += 1
+            l.append(l2)
+        return l
+    
+    def find(self,a) : 
+        m = self.m 
+        n = self.n 
+        l = self.state
+        for i in range(m) : 
+            for j in range(n) : 
+                if l [i][j] == a :
+                    return (i,j)
+        return None 
+
+
+
     def to_hashable(self) :    # retourne une représenttaion hashable de la grille
         return tuple(tuple(l) for l in self.state)
     
@@ -204,23 +229,23 @@ class Grid():
         l = []
         for i in range(m) : 
             l.append(range(i*n+1, (i+1)*n+1))
-        print(l)
         grid = Grid(m,n,l)
         return graph.bfs(self.to_hashable(),grid.to_hashable())
     
     def voisin(self) : 
-        l = [] 
+        vois = [] 
         m = self.m 
         n = self.n 
         for i in range(m):
             for j in range(n):
-                if i < m-1:
-                    c = self.swap((i,j), (i+1,j))
-                    l.append(c)
-                if j < n-1:
-                    f = self.swap((i,j), (i,j+1))
-                    l.append(f)
-        return l 
+                for l,c in [(0,1),(1,0),(-1,0),(0,-1)] :
+                    new1,new2 = l+i, c+j
+                    if new1 < m and new2 < n : 
+                        new = [i[:] for i in self.state]
+                        new[i][j], new[new1][new2] = new[new1][new2], new[i][j]
+                        if new not in vois : 
+                            vois.append(Grid(m,n,new).to_hashable())
+        return vois
 
 
     def bfs3 (self, dst):
@@ -231,7 +256,6 @@ class Grid():
 
         while file: 
             s, path = file.pop(0)
-            print((s,path))
             if s == dst.to_hashable():
                 return path 
 
@@ -269,7 +293,7 @@ class Grid():
 
 
 
-    def heuristique(self) : 
+    def heuristique(self) :    # différence entre grille de départ et d'arrivée
         som = 0 
         l1 = self.state 
         m = self.m
@@ -277,38 +301,61 @@ class Grid():
 
         for i in range(m) : 
             for j in range(n) : 
-                if not(l1[i][j] == i+j*n+1) : 
+                if not(l1[i][j] == (self.final())[i][j]) : 
                     som+=1
-        return som//2
+        return som/2
+    
+    def heuristique1(self) :    # distance de manhattan 
+        som = 0
+        m = self.m
+        n = self.n
+        f = self.final()
+        for i in range(m*n+1) : 
+            i1 = 0
+            som += abs()
+
 
     def bfs4(self,dst) : 
         n = self.n 
         m = self.m
         file = []
-        heappush(file,((0,(self.heuristique(),self.to_hashable() )), [self.to_hashable()]))
-
+        heappush(file,(0,self.heuristique(),self.to_hashable()))
+        path = [self.to_hashable()]
+    
         while file: 
-            ((nb_swaps, (_,s)),path) = heappop(file)
+            (nb_swaps, _,s) = heappop(file)
             if s == dst.to_hashable():
-                return (s,path)
-            s1 = dst.from_hashable(s)
-            for g in s1.voisin() :    
+                print(f"Mon état final est : \n {s} \n ")
+                print(f"Mon chemin pour y arriver est : \n {path} \n")
+                return self.from_hashable(s)
+            path.append(s)
+            s1 = self.from_hashable(s)
+            for g in s1.voisin() : 
                 if g not in path : 
-                    i = dst.to_hashable()
-                    heappush(file,[(nb_swaps-1,(g.heuristique(),i)), path+[i]])
+                    i = self.from_hashable(g)
+                    heappush(file,(nb_swaps-1,i.heuristique(),g))
+                    
                 
         return None
-        
-        
-
     
 
 
-    
-
-    
-
         
+
+            
+
+
+    
+    
+
+
+
+
+
+
+
+
+    
 
 
 
