@@ -4,6 +4,10 @@ sys.path.append("swap_puzzle/")
 import unittest 
 from graph import Graph
 
+"""
+Tests des fonctions graph_from_file_path et bfs 
+"""
+
 class Test_graph(unittest.TestCase):
     def test_graph1(self):
         graph = Graph.graph_from_file("input/graph1.in")

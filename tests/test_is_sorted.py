@@ -5,6 +5,10 @@ sys.path.append("swap_puzzle/")
 import unittest 
 from grid import Grid
 
+"""
+Tests de la fonction is_sorted 
+"""
+
 class Test_IsSorted(unittest.TestCase):
     def test_grid1(self):
         grid = Grid.grid_from_file("input/grid1.in")

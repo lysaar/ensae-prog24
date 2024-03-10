@@ -139,6 +139,7 @@ class Grid():
         return grid
     
     def final(self) : 
+        """ Retourne la grille rangée de self """
         m = self.m 
         n = self.n 
         l = []
@@ -151,27 +152,19 @@ class Grid():
             l.append(l2)
         return l
     
-    def find(self,a) : 
-        m = self.m 
-        n = self.n 
-        l = self.state
-        for i in range(m) : 
-            for j in range(n) : 
-                if l [i][j] == a :
-                    return (i,j)
-        return None 
 
-
-
-    def to_hashable(self) :    # retourne une représenttaion hashable de la grille
+    def to_hashable(self) : 
+        """ Retourne une représentation hashable de la grille  """
         return tuple(tuple(l) for l in self.state)
     
     def from_hashable(self,state) : 
+        """ Transforme un tuple de tuples en une grille """
         res = [list(r) for r in state] 
         return Grid(self.m,self.n,res)
     
 
-    def grille(self) :   # Rend toutes les grilles hashées des permutations possibles à partir de self
+    def grille(self) :   
+        """Rend toutes les grilles hashées des permutations possibles à partir de self """
 
         final = []
         liste = []
@@ -191,7 +184,8 @@ class Grid():
         
 
 
-    def all(self) : # Construit le graphe de tous les états possibles
+    def all(self) : 
+        """ Construit le graphe de tous les états possibles """ 
         
         graph1 = Graph(self.grille())
         m = self.m
@@ -223,6 +217,7 @@ class Grid():
         return graph1
 
     def bfs2(self) : 
+        """ Applique le bfs sur le graphe comportant tous les états atteignables à partir de self """
         m = self.m
         n = self.n
         graph = self.all()
@@ -233,6 +228,7 @@ class Grid():
         return graph.bfs(self.to_hashable(),grid.to_hashable())
     
     def voisin(self) : 
+        """ Rend les voisins possibles de self à partir d'un swap """
         vois = [] 
         m = self.m 
         n = self.n 
@@ -249,6 +245,7 @@ class Grid():
 
 
     def bfs3 (self, dst):
+        """ Fonction bfs2 mais il construit le graphe au fur et à mesure et non pas en amont """
         dico = Graph([self.to_hashable()])
         n = self.n 
         m = self.m
@@ -292,6 +289,7 @@ class Grid():
         return None
 
     def position(self,k) : 
+        """ Retourne les coordonnées de a dans la grille self  """
         s = self.state
         m = self.m
         n = self.n 
@@ -300,7 +298,8 @@ class Grid():
                 if s[i][j] == k : 
                     return (i,j)
 
-    def heuristique(self) :    # différence entre grille de départ et d'arrivée
+    def heuristique(self) :    
+        """ Heuristique qui calcule la différence entre la grille de départ self et celle d'arrivée"""
         som = 0 
         l1 = self.state 
         m = self.m
@@ -311,7 +310,8 @@ class Grid():
                     som+=1
         return som/2
     
-    def heuristique1(self) :    # distance de manhattan 
+    def heuristique1(self) :    
+        """ Distance de manhattan entre self et la grille destination """ 
         som = 0
         m = self.m
         n = self.n
@@ -323,7 +323,8 @@ class Grid():
             som += abs(i1-i2) + abs(j1-j2)
         return som/2
     
-    def heuristique2(self) :    # distance 2
+    def heuristique2(self) :   
+        """ Distance euclidienne entre self et la grille destination """
         som = 0
         m = self.m
         n = self.n
@@ -338,10 +339,11 @@ class Grid():
 
 
     def bfs4(self,dst) : 
+        """ A star qui utilise une file de priorité file """
         n = self.n 
         m = self.m
         file = []
-        heappush(file,(0,self.heuristique(),self.to_hashable()))
+        heappush(file,(0,self.heuristique1(),self.to_hashable()))
         path = [self.to_hashable()]
     
         while file: 
@@ -355,7 +357,7 @@ class Grid():
             for g in s1.voisin() : 
                 if g not in path : 
                     i = self.from_hashable(g)
-                    heappush(file,(nb_swaps-1,i.heuristique(),g))
+                    heappush(file,(nb_swaps-1,i.heuristique1(),g))
                     
                 
         return None

@@ -2,6 +2,10 @@ import pygame
 from pygame.locals import *
 from grid import * 
 
+"""
+Classe qui permet de gérer le jeu du puzzle en l'affichant et en permettant à l'utilisateur de faire les swaps 
+"""
+
 # Paramètres du jeu
 WIDTH, HEIGHT = 700, 700
 HINT_WIDTH = 400
@@ -99,6 +103,8 @@ class Game() :
 
         return True
      
+
+    # Message affiché si le puzzle est bien trié
     @staticmethod
     def message(screen):
         large1 = pygame.font.Font(None, 60)
@@ -115,6 +121,7 @@ class Game() :
     def game(self) : 
         pygame.init()
 
+        # Ouverture la fenêtre
         start_time = pygame.time.get_ticks()
         screen = pygame.display.set_mode((WIDTH,HEIGHT))
         pygame.display.set_caption("Swap Puzzle Game")
@@ -131,33 +138,34 @@ class Game() :
             events = pygame.event.get()  # Récupérez tous les événements une seule fois
 
             for event in events:
-                if event.type == QUIT:
+                if event.type == QUIT:  
                     running = False
 
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:   # Si on clique gauche 
                     x, y = event.pos
                     case_c = Game.case_clique(cases, x, y)
 
                     if case_c:
                         current_time = pygame.time.get_ticks()
-                        if case_c == depart and current_time - double_click_time < 500:
+                        if case_c == depart and current_time - double_click_time < 500:   # Si on déselectionne une case pour en choisir une autre à bouger
                             swaps_count -= 1
                             depart["selected"] = False
                             depart = None
                         else:
-                            if self.swap_case(cases, depart, case_c):
+                            if self.swap_case(cases, depart, case_c):  # Si c'est une case différente, on swap
                                 swaps_count += 1
                             depart = case_c
                             depart["selected"] = True
                             double_click_time = current_time
 
-                if event.type == KEYDOWN and event.key == K_SPACE:
+                if event.type == KEYDOWN and event.key == K_SPACE:    # Si on appuie sur espace, la fenêtre se ferme
                     running = False
 
 
             screen.fill(BLACK)
             Game.dessine_cases(screen, cases)
 
+            # Si la grille est rangée, on affiche le message 
             if self.is_solution(cases):
                 end_time = pygame.time.get_ticks()
                 temps = (end_time - start_time) // 1000

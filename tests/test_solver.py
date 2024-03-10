@@ -6,6 +6,11 @@ import unittest
 from grid import Grid
 from solver import Solver
 
+"""
+Tests des fonctions graph et get_solution 
+On peut comparer les représentations graphiques avant et après get_solution et le dégradé de couleurs 
+"""
+
 class Test_Solver(unittest.TestCase):
     def test_grid1(self):
         grid = Grid.grid_from_file("input/grid1.in")

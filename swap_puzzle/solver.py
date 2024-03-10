@@ -11,7 +11,7 @@ class Solver():
         self.g = grid 
         
     def go_from_to(self,dep, dest):    
-        """ Cherche le manière naive d'ailler de dep à dest """
+        """ Cherche le manière naive d'aller de dep à dest """
         res = []
         a, b = dep
         i, j = dest
@@ -63,6 +63,7 @@ class Solver():
 
     @staticmethod
     def graph(l) : 
+        """ Donne une représentation colorée de l'état ordonné de la grille """
         plt.matshow(array(l))
         plt.show()
 

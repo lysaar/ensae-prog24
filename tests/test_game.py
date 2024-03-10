@@ -5,6 +5,11 @@ from game import Game
 
 import unittest
 
+"""
+Tests de la fonction game()
+On la test sur des matrices de taille variée 
+"""
+
 class Test_Game(unittest.TestCase):
 
     def test_game1(self) : 
