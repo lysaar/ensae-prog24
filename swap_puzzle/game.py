@@ -99,6 +99,16 @@ class Game() :
 
         return True
      
+    @staticmethod
+    def message(screen):
+        large1 = pygame.font.Font(None, 60)
+        large2 = pygame.font.Font(None, 50)
+        mess = large1.render("VICTORY", True, BLACK)
+        mess2 = large2.render("Appuyez sur espace pour continuer !", True, BLACK)
+        texte= mess.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        texte2 = mess2.get_rect(center=(WIDTH // 2, 2*(HEIGHT // 3)))
+        screen.blit(mess, texte)
+        screen.blit(mess2,texte2)
             
 
 
@@ -141,6 +151,9 @@ class Game() :
                             depart["selected"] = True
                             double_click_time = current_time
 
+                if event.type == KEYDOWN and event.key == K_SPACE:
+                    running = False
+
 
             screen.fill(BLACK)
             Game.dessine_cases(screen, cases)
@@ -148,8 +161,9 @@ class Game() :
             if self.is_solution(cases):
                 end_time = pygame.time.get_ticks()
                 temps = (end_time - start_time) // 1000
+                Game.message(screen)
                 print(f"\n VOUS AVEZ RESOLU LE PUZZLE EN {temps} SECONDES AVEC {swaps_count} SWAPS, FELICITATIONS ! \n")
-                running = False
+                
 
             pygame.display.flip()
             clock.tick(30)
