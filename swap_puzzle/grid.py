@@ -64,10 +64,11 @@ class Grid():
         m = self.m
         n = self.n
         l = self.state
-        for i in range(m) :
-            for j in range(n-1) : 
-                if l[i][j] > l[i][j+1] : 
-                    return False 
+        l2 = self.final()
+        for i in range(m) : 
+            for j in range(n) : 
+                if not(l[i][j] == l2[i][j]) : 
+                    return False
         return True
 
 
@@ -106,8 +107,7 @@ class Grid():
             List of swaps, each swap being a tuple of two cells (each cell being a tuple of integers). 
             So the format should be [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...].
         """
-        for i in range(len(cell_pair_list)) : 
-            (a,b) = cell_pair_list[i]
+        for (a,b) in cell_pair_list : 
             self.swap(a,b)
 
     @classmethod
@@ -291,14 +291,20 @@ class Grid():
 
         return None
 
-
+    def position(self,k) : 
+        s = self.state
+        m = self.m
+        n = self.n 
+        for i in range(m) :
+            for j in range(n) :
+                if s[i][j] == k : 
+                    return (i,j)
 
     def heuristique(self) :    # différence entre grille de départ et d'arrivée
         som = 0 
         l1 = self.state 
         m = self.m
         n = self.n
-
         for i in range(m) : 
             for j in range(n) : 
                 if not(l1[i][j] == (self.final())[i][j]) : 
@@ -310,9 +316,25 @@ class Grid():
         m = self.m
         n = self.n
         f = self.final()
-        for i in range(m*n+1) : 
-            i1 = 0
-            som += abs()
+        f = Grid(m,n,f)
+        for i in range(1,m*n+1) : 
+            i1,j1 = self.position(i)
+            i2,j2 = f.position(i)
+            som += abs(i1-i2) + abs(j1-j2)
+        return som/2
+    
+    def heuristique2(self) :    # distance 2
+        som = 0
+        m = self.m
+        n = self.n
+        f = self.final()
+        f = Grid(m,n,f)
+        for i in range(1,m*n+1) : 
+            i1,j1 = self.position(i)
+            i2,j2 = f.position(i)
+            som += sqrt((i1-i2)**2+(j1-j2)**2)
+        return som/2
+
 
 
     def bfs4(self,dst) : 
@@ -333,7 +355,7 @@ class Grid():
             for g in s1.voisin() : 
                 if g not in path : 
                     i = self.from_hashable(g)
-                    heappush(file,(nb_swaps-1,i.heuristique(),g))
+                    heappush(file,(nb_swaps-1,i.heuristique1(),g))
                     
                 
         return None
