@@ -2,58 +2,165 @@ import pygame
 from pygame.locals import *
 from grid import * 
 
+# Paramètres du jeu
+WIDTH, HEIGHT = 700, 700
+HINT_WIDTH = 400
+
+# Couleurs
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GRAY = (150, 150, 150)
+
 class Game() : 
 
     def __init__(self,grid) -> None:
         self.grid = grid
 
 
-    def game(self) : 
-        g = self.grid
+    # Création cases 
+    def cases(self):
+        g = self.grid 
+        state = g.state
         m = g.m
         n = g.n
-        h = 510
-        w = 510
-        SIZE = h, w
-        RED = (255, 0, 0)
-        GRAY = (150, 150, 150)
+        t = WIDTH//n 
+        l = []
+        for row in range(m):
+            for col in range(n):
+                case = pygame.Rect(col * t, row * t, t, t)
+                l.append({"rect": case, "selected": False,"num" :state[row][col] }) # selcted : pour savoir si on l'a sélctionnée (au départ non)
+        return l
 
+    # Dessine la grille avec les numéros associées, la case est plus foncée si sélectionnée
+    @staticmethod
+    def dessine_cases(screen,cases):
+        for case in cases:
+            pygame.draw.rect(screen, WHITE if not case["selected"] else (200, 200, 200), case["rect"])
+            pygame.draw.rect(screen, RED, case["rect"], 2)
+            font = pygame.font.Font(None, 36)
+            text = font.render(str(case["num"]), True, RED)
+            text_rect = text.get_rect(center=case["rect"].center)
+            screen.blit(text, text_rect)
+    
+
+    # Lors d'un clique, retourne la case où il a eu lieux
+    @staticmethod
+    def case_clique(cases, x, y):
+        for case in cases:
+            if case["rect"].collidepoint(x, y):
+                return case
+        return None
+    
+
+    # Fonctions pour vérifier que les swaps sont autorisés 
+    @staticmethod
+    def horizontal(origine, dst):
+        return origine["rect"].y == dst["rect"].y
+
+    @staticmethod
+    def vertical(origine, dst):
+        return origine["rect"].x == dst["rect"].x
+
+    def unique_mvt(self,origine, dst):  # On ne fait qu'un swap à la fois
+        t = WIDTH // ((self.grid).n)
+        return (abs(origine["rect"].x - dst["rect"].x) <= t and
+                abs(origine["rect"].y - dst["rect"].y) <= t)
+    
+    # Echange des cases 
+    def swap_case(self,cases, origine, dst):
+        if origine and dst:
+            if Game.horizontal(origine, dst) or Game.vertical(origine, dst) and self.unique_mvt(origine, dst):   # On vérifie que le swap est possible 
+                origine_indice = cases.index(origine)
+                dst_indice = cases.index(dst)
+                cases[origine_indice], cases[dst_indice] = cases[dst_indice], cases[origine_indice]
+                origine["num"], dst["num"] = dst["num"], origine["num"]
+                origine["selected"] = False
+                return True
+
+        return None
+
+    # Test si le puzzle est réussi
+    def is_solution(self, cases):
+        m = (self.grid).m
+        n = (self.grid).n
+        t = WIDTH // n
+
+        for row in range(m):
+            for col in range(n):
+                i = row * n + col
+                expected_x = col * t
+                expected_y = row * t
+
+                current_case = next((case for case in cases if case["num"] == i + 1), None)
+
+                if current_case is None or current_case["rect"].x != expected_x or current_case["rect"].y != expected_y:
+                    return False
+
+        return True
+     
+            
+
+
+    def game(self) : 
         pygame.init()
-        screen = pygame.display.set_mode(SIZE,RESIZABLE)
 
-        r=[]
-        X = []
-        Y=[]
-        for i in range(0,h,h//n) : 
-            for j in range(0,w,w//m) : 
-                x = (i,j)
-                y = (i+h//n,j+w//m)
-                X.append(x)
-                Y.append(Y)
-                r.append(Rect(x[0],x[1],y[0],y[1]))
+        start_time = pygame.time.get_ticks()
+        screen = pygame.display.set_mode((WIDTH,HEIGHT))
+        pygame.display.set_caption("Swap Puzzle Game")
+        clock = pygame.time.Clock()
+
+        cases = self.cases()
+        swaps_count = 0
+        depart = None
+        double_click_time = 0
             
 
         running = True
         while running:
-            for event in pygame.event.get():
+            events = pygame.event.get()  # Récupérez tous les événements une seule fois
+
+            for event in events:
                 if event.type == QUIT:
                     running = False
 
-            screen.fill(GRAY)
-            for r1 in r : 
-                pygame.draw.rect(screen, RED, r1,4)
-            
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    x, y = event.pos
+                    case_c = Game.case_clique(cases, x, y)
+
+                    if case_c:
+                        current_time = pygame.time.get_ticks()
+                        if case_c == depart and current_time - double_click_time < 500:
+                            swaps_count -= 1
+                            depart["selected"] = False
+                            depart = None
+                        else:
+                            if self.swap_case(cases, depart, case_c):
+                                swaps_count += 1
+                            depart = case_c
+                            depart["selected"] = True
+                            double_click_time = current_time
+
+
+            screen.fill(BLACK)
+            Game.dessine_cases(screen, cases)
+
+            if self.is_solution(cases):
+                end_time = pygame.time.get_ticks()
+                temps = (end_time - start_time) // 1000
+                print(f"\n VOUS AVEZ RESOLU LE PUZZLE EN {temps} SECONDES AVEC {swaps_count} SWAPS, FELICITATIONS ! \n")
+                running = False
+
             pygame.display.flip()
+            clock.tick(30)
+
 
         pygame.quit()
                 
 
         
 
-
-
-
-g = Grid(4,2,[[1,2],[3,4],[5,6],[7,8]])
+g = Grid(2,2,[[3,1],[2,4]])
 p = Game(g)
 p.game()
 

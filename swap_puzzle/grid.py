@@ -355,7 +355,7 @@ class Grid():
             for g in s1.voisin() : 
                 if g not in path : 
                     i = self.from_hashable(g)
-                    heappush(file,(nb_swaps-1,i.heuristique1(),g))
+                    heappush(file,(nb_swaps-1,i.heuristique(),g))
                     
                 
         return None
