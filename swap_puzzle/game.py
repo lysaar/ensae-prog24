@@ -160,10 +160,6 @@ class Game() :
 
         
 
-g = Grid(2,2,[[3,1],[2,4]])
-p = Game(g)
-p.game()
-
 
 
 
